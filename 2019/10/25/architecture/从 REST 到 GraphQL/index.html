@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="从 REST 到 GraphQL名词解释REST指 B/S 开发界无人不知的 RESTful API，它是一种 API 的设计风格：URL定位资源，用HTTP动词（GET,POST,PUT,DELETE）描述操作。详细内容可参考阮一峰老师的文章RESTful API 设计指南 比如获取班级 A 中学生 B 的的信息：  GET /class/a/student?name=b  GraphQL首先是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 REST 到 GraphQL">
+<meta property="og:url" content="https://smartlei24.github.io/2019/10/25/architecture/从 REST 到 GraphQL/index.html">
+<meta property="og:site_name" content="Lei Cai&#39;s Blog">
+<meta property="og:description" content="从 REST 到 GraphQL名词解释REST指 B/S 开发界无人不知的 RESTful API，它是一种 API 的设计风格：URL定位资源，用HTTP动词（GET,POST,PUT,DELETE）描述操作。详细内容可参考阮一峰老师的文章RESTful API 设计指南 比如获取班级 A 中学生 B 的的信息：  GET /class/a/student?name=b  GraphQL首先是">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-10-25T09:43:40.375Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从 REST 到 GraphQL">
+<meta name="twitter:description" content="从 REST 到 GraphQL名词解释REST指 B/S 开发界无人不知的 RESTful API，它是一种 API 的设计风格：URL定位资源，用HTTP动词（GET,POST,PUT,DELETE）描述操作。详细内容可参考阮一峰老师的文章RESTful API 设计指南 比如获取班级 A 中学生 B 的的信息：  GET /class/a/student?name=b  GraphQL首先是">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://smartlei24.github.io/2019/10/25/architecture/从 REST 到 GraphQL/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>从 REST 到 GraphQL | Lei Cai's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lei Cai's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/smartlei24" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://smartlei24.github.io/2019/10/25/architecture/从 REST 到 GraphQL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lei Cai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lei Cai's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从 REST 到 GraphQL
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-25 17:43:13 / 修改时间：17:43:40" itemprop="dateCreated datePublished" datetime="2019-10-25T17:43:13+08:00">2019-10-25</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/architecture/" itemprop="url" rel="index"><span itemprop="name">architecture</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/10/25/architecture/从 REST 到 GraphQL/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/10/25/architecture/从 REST 到 GraphQL/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="从-REST-到-GraphQL"><a href="#从-REST-到-GraphQL" class="headerlink" title="从 REST 到 GraphQL"></a>从 REST 到 GraphQL</h1><h2 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h2><h3 id="REST"><a href="#REST" class="headerlink" title="REST"></a>REST</h3><p>指 B/S 开发界无人不知的 RESTful API，它是一种 API 的设计风格：URL定位资源，用HTTP动词（GET,POST,PUT,DELETE）描述操作。详细内容可参考阮一峰老师的文章<a href="https://www.baidu.com/link?url=40sr-RZmpSr8kdi0Jlxtj30OgHy0iwkuV7QiHAKTcak_AqLwHE6D_XLIXj3LwHRf4T_nmjqXaCIKGPyG4ffqn72fZttwRjH-YnFQGdk-Rsy&wd=&eqid=a82ecb0a00040e6b000000025d8c81c3" target="_blank" rel="noopener"><em>RESTful</em> API 设计指南</a></p>
+<p>比如获取班级 A 中学生 B 的的信息：</p>
+<blockquote>
+<p>GET /class/a/student?name=b</p>
+</blockquote>
+<h3 id="GraphQL"><a href="#GraphQL" class="headerlink" title="GraphQL"></a>GraphQL</h3><p>首先是一种查询语言（QL == Query Language），从字面上看它应该是和 SQL 是同一级别的东西，其实确实可以这么认为，毕竟两者都主要是为了查询数据而设计，只是 GraphQL 的抽象更高，并且面向的不是数据库而是 API。</p>
+<p>从 <code>Graph</code>QL 中的 Graph 这个单词中我们也可以看出，它是和图论是有一定关系的，如果把所有对象都看作一个节点，把各个节点之间的关系看作边，那最终就会组成一张图，我们可以从一个节点出发，通过节点之间的联系，到达其他节点，获取其信息。GraphQL 描述如何去通过这张图获取需要的信息的查询语言，具体就是将路径通过一种类似 JSON 的格式表现出来 。</p>
+<p>比如上例查询班级 A 中学生 B 的年龄和性别，就可以通过 GET 方法以以下内容发送请求（当然是在 query string里，而非body中）</p>
+<blockquote>
+<p>GET /grahpql</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">query &#123;</span><br><span class="line">  class(id=A) &#123;</span><br><span class="line">    students(name=&quot;B&quot;) &#123;</span><br><span class="line">      age</span><br><span class="line">      gender</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="为什么要用-GraphQL？"><a href="#为什么要用-GraphQL？" class="headerlink" title="为什么要用 GraphQL？"></a>为什么要用 GraphQL？</h2><p>软件行业的前辈曾说过学一门新技术的兴起一定是为了解决一些现有的问题，我们在学习这门新技术之前，也应当先搞清楚这门技术到底解决了什么问题。</p>
+<p>首先我们先来聊聊现有的 RESTful API，这两年 REST 真可谓是大行其道，无处不见其身影，自我刚参加工作就接受了它的“洗脑”，一直都是它的铁杆粉丝。平时看到哪个 API 没有遵守 RESTful API 规范，心里都是暗暗的一阵鄙视。为什么 RESTful API 能受到大家如此的推崇呢？我想最主要的就是因为它的定义清晰，规则简单，可读性很强，和 HTTP 协议的结合也是十分完美。我们能够很容易地从一条 API 的 URL 得出这条 API 的用途和它的输入和大概返回信息，再加上一些自动化的文档工具，大大程度上减少了前后端沟通的成本。</p>
+<p>但是，RESTful API 并不是完美的，其最大的弊端在于 <strong>前端和后端之间并没有实现所谓的“高内聚，低耦合”</strong>。理想情况下，在 API 设计阶段我们都希望根据领域建模做好设计，做到每个 API 都整洁直观可复用，最后前端再通过相对应的 API 进行组合调用实现功能。</p>
+<p>但实际上能做到如此的少之又少，最终我们往往都因为一些前端功能的变动（一般来讲也就是需求的变动）就修改已存在 API，再有甚者，不得不另外再造一个差不多的 API，到后来 API 越来越多，造成 “API 爆炸”。以至于前端功能（需求）的变动往往都会导致后端的变动和增加重复内容。</p>
+<p>比如，我们已有一个 API (/class/students) 获取班级中的所有同学的学号，现在需求变了，前端需要这些同学的姓名，性别等信息，并且因为考虑到性能，当然不能让前端拿到学号之后再一个一个的去查同学的信息，这时就只有两种方案：</p>
+<ol>
+<li>直接改 API，使之从返回一个 number 数组，改变为返回一个 Object 数组</li>
+<li>考虑到这个 API 目前已经有很多其他地方在用了，只能另外建一个新 API：/class/students-detail 用来满足需求</li>
+</ol>
+<p>无论哪种方案我们都需要对后端的 API 设计进行改动，其直接原因就是 API 的设计直接依赖于需求（大多数时候体现就是前端功能），而需求则是难以预测和琐碎的，这就导致 API 的最终实现很难与最开始设计的一致。而 GraphQL 就是来解决这一问题的：降低前后端之间的耦合，让两者都专注的做自己的事情。</p>
+<h2 id="GraphQL-如何解决问题"><a href="#GraphQL-如何解决问题" class="headerlink" title="GraphQL 如何解决问题"></a>GraphQL 如何解决问题</h2><p>简而言之，GraphQL 就是提供了一个唯一的 API，任何数据访问都直接通过这个 API，这个 API 与任何单一的业务逻辑和需求无关，只是作为一个服务的入口。前端通过这个 API 告诉后端，我需要哪些数据，以及这些数据的格式、结构，后端根据前端的请求直接返回对应的数据，这样数据内容、结构都是由前端的请求决定的，如此一来后端 API 便不需要因为前端的变更而频繁的变动，也不用担心会影响到旧 API 。</p>
+<p>上面说过通过 GraphQL 可以降低前后端之间的耦合，让两者都可以专注做自己的事情，让前端专注功能和需求功能，让后端专注模型的建立。</p>
+<p>在一定程度上，我们可以直接把后端看作是为前端提供数据的（类似数据库一样的东西）。如果用过 ORM（比如 EF） 的同学，在实现 GraphQL 形式的后端服务时可能会感到很熟悉，因为两者的一部分工作都建立在建立对象关系模型上，在忽略某些其他情况下（如权限控制），我们此时可以将后端看作一个对外的 ORM，我们通过 GraphQL 与其交互，得到我们期望的结果。</p>
+<p>这里我们通过两个例子来说明简单的 GraphQL 使用：</p>
+<ol>
+<li><p>查询 A 班级中所有姓名为 B 的学生的年龄及性别：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">query &#123;</span><br><span class="line">  class(id=A) &#123;</span><br><span class="line">    students(name=&quot;B&quot;) &#123;</span><br><span class="line">      age</span><br><span class="line">      gender</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>反过来查询所有姓名为 B 的学生的班级序号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">query &#123;</span><br><span class="line">  students(name=&quot;B&quot;) &#123;</span><br><span class="line">    classId</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>上面两个原先需要另外写的 API，通过 Graphql 就直接通过 GraphQL 解决了，只要对象建模没有问题，就无需修改后端，相比 RESTful API 的设计灵活的多，还是很方便的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>后端不想总是改接口或新增接口，请使用 GraphQL</p>
+<p>前端不想总是要等后端改接口，也请使用 GraphQL</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div class="social_share">
+            
+              <div>
+                
+
+<script src="//cdn.jsdelivr.net/npm/ilyabirman-likely@2/release/likely.js"></script>
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/ilyabirman-likely@2/release/likely.css">
+
+
+  
+
+
+<div class="likely">
+	
+ 	 	<div class="twitter">Tweet</div>
+	
+ 	 	<div class="facebook">Share</div>
+	
+ 	 	<div class="linkedin">Link</div>
+	
+ 	 	<div class="gplus">Plus</div>
+	
+ 	 	<div class="vkontakte">Share</div>
+	
+ 	 	<div class="odnoklassniki">Class</div>
+	
+ 	 	<div class="telegram">Send</div>
+	
+ 	 	<div class="whatsapp">Send</div>
+	
+ 	 	<div class="pinterest">Pin</div>
+	
+</div>
+
+              </div>
+            
+            
+            
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/25/dotnet/call_method/" rel="next" title="从一道题来看 C# 的方法调用">
+                <i class="fa fa-chevron-left"></i> 从一道题来看 C# 的方法调用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Lei Cai</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          <script type="text/javascript" src="http://tajs.qq.com/stats?sId=66392255" charset="UTF-8"></script>
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#从-REST-到-GraphQL"><span class="nav-number">1.</span> <span class="nav-text">从 REST 到 GraphQL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#名词解释"><span class="nav-number">1.1.</span> <span class="nav-text">名词解释</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#REST"><span class="nav-number">1.1.1.</span> <span class="nav-text">REST</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GraphQL"><span class="nav-number">1.1.2.</span> <span class="nav-text">GraphQL</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要用-GraphQL？"><span class="nav-number">1.2.</span> <span class="nav-text">为什么要用 GraphQL？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GraphQL-如何解决问题"><span class="nav-number">1.3.</span> <span class="nav-text">GraphQL 如何解决问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lei Cai</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: true,
+    appId: 'LkBnYxPhxhoe6j8agMX3FaQS-gzGzoHsz',
+    appKey: 'xC6MABbdwOkFsT2vKP8Eynyo',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: 'zh-cn' || 'zh-cn'
+  });
+</script>
+
+
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+<script>
+  $('.highlight').each(function(i, e) {
+    var $wrap = $('<div>').addClass('highlight-wrap');
+    $(e).after($wrap);
+    $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+      var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+        return $(e).text();
+      }).toArray().join('\n');
+      var ta = document.createElement('textarea');
+      var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+      ta.style.top = yPosition + 'px'; // Prevent page scroll
+      ta.style.position = 'absolute';
+      ta.style.opacity = '0';
+      ta.readOnly = true;
+      ta.value = code;
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, code.length);
+      ta.readOnly = false;
+      var result = document.execCommand('copy');
+      
+      ta.blur(); // For iOS
+      $(this).blur();
+    })).on('mouseleave', function(e) {
+      var $b = $(this).find('.copy-btn');
+      setTimeout(function() {
+        $b.text('复制');
+      }, 300);
+    }).append(e);
+  })
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
